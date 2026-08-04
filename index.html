@@ -13,18 +13,24 @@
   :root{
     --paper:#FBF8F2;
     --card:#FFFFFF;
-    --ink:#2A2A24;
-    --ink-soft:#726F60;
-    --board:#26332B;
-    --board-2:#314137;
-    --board-2:#334339;
-    --chalk:#F1EDE1;
-    --mustard:#C89B3C;
+    --ink:#2A2119;
+    --ink-soft:#7A6F63;
+    --board:#221419;
+    --board-2:#341F26;
+    --chalk:#F3E9DD;
+    --gold-1:#F0CD82;
+    --gold-2:#C9992E;
+    --gold-3:#8C6A1B;
+    --mustard:#C9992E;
     --mustard-deep:#A87F26;
     --rust:#A8432A;
-    --sage:#7C9473;
-    --line: rgba(42,42,36,0.13);
-    --shadow: 0 2px 10px rgba(38,51,43,0.08);
+    --sage:#6E9178;
+    --berry:#B04E68;
+    --cheat-a:#FFB65C;
+    --cheat-b:#E24B3E;
+    --line: rgba(42,33,25,0.13);
+    --shadow: 0 4px 18px rgba(34,20,25,0.09);
+    --shadow-gold: 0 6px 20px rgba(140,106,27,0.28);
   }
   *{box-sizing:border-box;}
   body,#app-root{margin:0;padding:0;}
@@ -44,118 +50,176 @@
   #app{flex:1; padding-bottom:84px;}
   ::-webkit-scrollbar{display:none;}
 
-  /* ---- Header chalkboard ---- */
+  /* ---- Header premium ---- */
   .board-header{
-    background:var(--board);
+    background:linear-gradient(165deg, var(--board) 0%, var(--board-2) 100%);
     color:var(--chalk);
-    padding:22px 20px 26px;
+    padding:24px 20px 22px;
     position:relative;
     overflow:hidden;
+  }
+  .board-header::before{
+    content:"";
+    position:absolute; top:-60%; right:-30%;
+    width:280px; height:280px; border-radius:50%;
+    background:radial-gradient(circle, rgba(240,205,130,0.20) 0%, rgba(240,205,130,0) 70%);
+    pointer-events:none;
   }
   .board-header::after{
     content:"";
     position:absolute; inset:0;
-    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
     background-size: 3px 3px;
     pointer-events:none;
   }
   .board-eyebrow{
     font-family:'Space Mono', monospace;
     font-size:11px;
-    letter-spacing:0.14em;
+    letter-spacing:0.16em;
     text-transform:uppercase;
-    color:var(--mustard);
+    color:var(--gold-1);
     margin:0 0 4px;
+    position:relative;
   }
   .board-title{
-    font-size:26px;
+    font-size:27px;
     font-weight:600;
     margin:0;
     line-height:1.15;
+    position:relative;
   }
   .board-sub{
     font-size:13px;
-    color:rgba(241,237,225,0.62);
+    color:rgba(243,233,221,0.6);
     margin-top:6px;
     font-style:italic;
     font-family:'Fraunces', serif;
+    position:relative;
   }
+  .stat-chips{
+    display:flex; gap:8px; margin-top:14px; position:relative; flex-wrap:wrap;
+  }
+  .stat-chip{
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    color:var(--chalk);
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(240,205,130,0.25);
+    border-radius:20px;
+    padding:5px 11px;
+    display:flex; align-items:center; gap:5px;
+  }
+  .stat-chip b{color:var(--gold-1); font-weight:700;}
   .plain-header{
     padding:24px 20px 14px;
+
   }
   .plain-header .board-eyebrow{color:var(--rust);}
   .plain-header .board-title{color:var(--ink);}
   .plain-header .board-sub{color:var(--ink-soft); font-style:normal; font-family:'DM Sans',sans-serif;}
 
-  /* ---- Week view ---- */
-  .day-card{
-    background:var(--card);
-    margin:14px 16px 0;
-    border-radius:14px;
-    box-shadow:var(--shadow);
-    overflow:hidden;
-    border:1px solid var(--line);
+  /* ---- Week view (grille compacte) ---- */
+  .week-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    padding:16px 16px 20px;
   }
-  .day-card:first-of-type{margin-top:18px;}
-  .day-card:last-of-type{margin-bottom:18px;}
-  .day-name{
+  .week-cell{
+    background:var(--card);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    border:1px solid var(--line);
+    padding:10px 11px 11px;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    min-height:132px;
+    position:relative;
+    transition:background 0.25s, border-color 0.25s;
+  }
+  .week-cell.is-weekend{grid-column: 1 / -1;}
+  .week-cell.is-weekend .week-slots{display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 14px;}
+  .week-cell.is-weekend .week-slot-mini:nth-child(2),
+  .week-cell.is-weekend .week-slot-mini:nth-child(3){border-top:none; padding-top:0; margin-top:0;}
+  .week-cell.is-cheat{
+    background:linear-gradient(150deg, var(--cheat-a), var(--cheat-b));
+    border-color:transparent;
+    box-shadow:0 6px 18px rgba(226,75,62,0.28);
+  }
+  .week-cell-top{display:flex; align-items:center; justify-content:space-between;}
+  .week-cell-day{
     font-family:'Fraunces', serif;
     font-weight:600;
-    font-size:16px;
-    padding:12px 16px 6px;
-    color:var(--ink);
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-  }
-  .day-name .day-date{
-    font-family:'Space Mono',monospace;
-    font-size:11px;
-    color:var(--ink-soft);
-    font-weight:400;
-  }
-  .slot-row{
-    display:flex;
-    align-items:center;
-    padding:9px 16px;
-    border-top:1px dashed var(--line);
-    gap:10px;
-    cursor:pointer;
-    transition:background 0.15s;
-  }
-  .slot-row:active{background:rgba(200,155,60,0.08);}
-  .slot-tag{
-    font-family:'Space Mono',monospace;
-    font-size:10px;
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-    color:var(--ink-soft);
-    width:40px;
-    flex-shrink:0;
-  }
-  .slot-filled{
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-  }
-  .slot-filled .recipe-name{
-    font-weight:500;
     font-size:14.5px;
     color:var(--ink);
   }
-  .slot-filled .tag-dot{
-    display:inline-block;width:7px;height:7px;border-radius:50%;
-    margin-right:7px;flex-shrink:0;
+  .week-cell.is-cheat .week-cell-day{color:#fff;}
+  .cheat-toggle{
+    width:24px; height:24px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; background:rgba(42,33,25,0.06);
+    border:none; cursor:pointer; flex-shrink:0;
+    transition:transform 0.15s;
   }
-  .slot-empty{
-    flex:1;
-    font-size:13.5px;
+  .cheat-toggle:active{transform:scale(0.85);}
+  .week-cell.is-cheat .cheat-toggle{background:rgba(255,255,255,0.28);}
+  .cheat-label{
+    font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.06em; text-transform:uppercase;
+    color:#fff; background:rgba(0,0,0,0.16); border-radius:20px; padding:2px 8px; width:fit-content;
+  }
+  .week-slots{display:flex; flex-direction:column; gap:0;}
+  .week-slot-mini{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    border-top:1px dashed var(--line);
+    padding-top:7px;
+    margin-top:7px;
+    cursor:pointer;
+  }
+  .week-cell.is-cheat .week-slot-mini{border-top-color:rgba(255,255,255,0.3);}
+  .week-slot-mini:first-child{border-top:none; padding-top:0; margin-top:0;}
+  .week-slot-mini:active{opacity:0.7;}
+  .mini-tag{
+    font-family:'Space Mono',monospace;
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
     color:var(--ink-soft);
-    border-bottom:1.5px dashed rgba(114,111,96,0.4);
-    padding-bottom:2px;
   }
+  .week-cell.is-cheat .mini-tag{color:rgba(255,255,255,0.75);}
+  .mini-content{
+    font-size:12.5px;
+    font-weight:500;
+    color:var(--ink);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    display:flex;
+    align-items:center;
+  }
+  .week-cell.is-cheat .mini-content{color:#fff;}
+  .mini-content .tag-dot{
+    display:inline-block;width:6px;height:6px;border-radius:50%;
+    margin-right:5px;flex-shrink:0;
+  }
+  .mini-content.is-empty{
+    color:var(--ink-soft);
+    font-weight:400;
+    border-bottom:1.5px dashed rgba(114,111,96,0.4);
+    padding-bottom:1px;
+    width:fit-content;
+  }
+  .people-dots{display:flex; gap:5px;}
+  .p-dot{
+    width:19px; height:19px; border-radius:50%;
+    border:1.5px solid; display:flex; align-items:center; justify-content:center;
+    font-family:'Space Mono',monospace; font-size:9px; font-weight:700; color:inherit;
+    flex-shrink:0; background:transparent;
+  }
+  .p-dot.filled{color:#fff;}
+  .week-cell.is-cheat .mini-content.is-empty{color:rgba(255,255,255,0.7); border-bottom-color:rgba(255,255,255,0.45);}
   .remove-x{
     color:var(--rust);
     font-size:16px;
@@ -170,41 +234,53 @@
     bottom:0; left:0; right:0;
     max-width:520px;
     margin:0 auto;
-    background:var(--card);
+    background:rgba(255,255,255,0.86);
+    -webkit-backdrop-filter:blur(14px);
+    backdrop-filter:blur(14px);
     border-top:1px solid var(--line);
+    box-shadow:inset 0 1px 0 rgba(240,205,130,0.4);
     display:flex;
     padding:8px 6px calc(8px + env(safe-area-inset-bottom));
-    box-shadow:0 -2px 12px rgba(38,51,43,0.06);
   }
   .nav-btn{
     flex:1;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:3px;
+    gap:4px;
     background:none;
     border:none;
     padding:6px 4px;
     font-family:'DM Sans',sans-serif;
-    font-size:11px;
+    font-size:10.5px;
+    font-weight:600;
     color:var(--ink-soft);
     cursor:pointer;
   }
-  .nav-btn .nav-icon{font-size:19px; line-height:1;}
-  .nav-btn.active{color:var(--mustard-deep); font-weight:700;}
+  .nav-btn .nav-icon{font-size:20px; line-height:1; transition:transform 0.15s;}
+  .nav-btn.active{color:var(--gold-3); font-weight:700;}
+  .nav-btn.active .nav-icon{transform:translateY(-1px);}
+  .nav-btn .nav-dot{width:4px; height:4px; border-radius:50%; background:transparent; margin-top:-1px;}
+  .nav-btn.active .nav-dot{background:var(--gold-2);}
 
   /* ---- Buttons ---- */
   .btn{
     font-family:'DM Sans',sans-serif;
     border:none;
-    border-radius:10px;
-    padding:11px 16px;
+    border-radius:11px;
+    padding:12px 16px;
     font-size:14px;
     font-weight:700;
     cursor:pointer;
+    transition:transform 0.1s;
   }
-  .btn-primary{background:var(--mustard); color:#2A2A24;}
-  .btn-primary:active{background:var(--mustard-deep);}
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{
+    background:linear-gradient(135deg, var(--gold-1), var(--gold-2));
+    color:#2A2119;
+    box-shadow:var(--shadow-gold);
+  }
+  .btn-primary:active{background:linear-gradient(135deg, var(--gold-1), var(--gold-3));}
   .btn-ghost{background:transparent; color:var(--ink-soft); border:1px solid var(--line);}
   .btn-rust{background:transparent; color:var(--rust); border:1px solid rgba(168,67,42,0.3);}
   .btn-sage{background:var(--sage); color:#fff;}
@@ -212,15 +288,36 @@
   .fab-row{padding:16px;}
 
   /* ---- Recipes tab ---- */
+  .recipe-card-wrap{
+    position:relative;
+    margin:0 16px 12px;
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .recipe-card-delete-bg{
+    position:absolute; inset:0;
+    background:var(--rust);
+    display:flex; align-items:center; justify-content:flex-end;
+    padding-right:22px;
+    cursor:pointer;
+  }
+  .recipe-card-delete-bg span{
+    color:#fff; font-weight:700; font-size:12.5px;
+    font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:5px; white-space:nowrap;
+  }
   .recipe-card{
     background:var(--card);
-    margin:0 16px 12px;
+    margin:0;
     border-radius:14px;
     padding:14px 16px;
     box-shadow:var(--shadow);
     border:1px solid var(--line);
     border-left:4px solid var(--mustard);
     cursor:pointer;
+    position:relative;
+    z-index:1;
+    touch-action:pan-y;
+    transition:transform 0.22s ease;
   }
   .recipe-card .rc-top{display:flex; justify-content:space-between; align-items:flex-start;}
   .recipe-card .rc-name{font-family:'Fraunces',serif; font-weight:600; font-size:16.5px;}
@@ -322,7 +419,7 @@
     border:1.5px solid var(--line); border-radius:10px; padding:10px; text-align:center;
     font-size:13px; cursor:pointer; color:var(--ink-soft);
   }
-  .pick-cell.filled{border-color:var(--mustard); color:var(--ink); background:rgba(200,155,60,0.08); font-weight:600;}
+  .pick-cell.filled{border-color:var(--gold-2); color:var(--ink); background:rgba(201,153,46,0.10); font-weight:600;}
   .recipe-pick-row{
     padding:12px 20px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; cursor:pointer;
   }
@@ -330,6 +427,32 @@
   .detail-ing{padding:3px 20px; font-size:14px; color:var(--ink);}
   .detail-instr{padding:10px 20px 0; font-size:14px; line-height:1.6; color:var(--ink); white-space:pre-wrap;}
   .loading-wrap{padding:60px 20px; text-align:center; color:var(--ink-soft); font-size:14px;}
+
+  /* ---- Sheet "Qui mange quoi" ---- */
+  .all-family-btn{
+    margin:10px 20px 6px; padding:12px 14px; border-radius:12px;
+    background:linear-gradient(135deg, rgba(240,205,130,0.18), rgba(201,153,46,0.10));
+    border:1px dashed var(--gold-2); color:var(--ink); font-family:'DM Sans',sans-serif;
+    font-size:13.5px; font-weight:700; display:flex; align-items:center; gap:8px; cursor:pointer; width:calc(100% - 40px);
+  }
+  .person-row{
+    padding:12px 20px; border-top:1px solid var(--line); display:flex; align-items:center; gap:11px; cursor:pointer;
+  }
+  .person-avatar{
+    width:32px; height:32px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Mono',monospace; font-size:13px; font-weight:700; color:#fff;
+  }
+  .person-info{flex:1; overflow:hidden;}
+  .person-name{font-size:13px; font-weight:700; color:var(--ink); font-family:'DM Sans',sans-serif;}
+  .person-recipe{font-size:13px; color:var(--ink-soft); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .person-recipe.filled{color:var(--ink); font-weight:500;}
+  .person-actions{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+  .person-view{font-size:15px;}
+  .person-clear{color:var(--rust); font-size:16px;}
+  .who-choice-row{
+    padding:14px 20px; border-top:1px solid var(--line); display:flex; align-items:center; gap:12px; cursor:pointer;
+  }
 </style>
 
 </head>
@@ -346,13 +469,19 @@
     {key:'lun', label:'Lundi'}, {key:'mar', label:'Mardi'}, {key:'mer', label:'Mercredi'},
     {key:'jeu', label:'Jeudi'}, {key:'ven', label:'Vendredi'}, {key:'sam', label:'Samedi'}, {key:'dim', label:'Dimanche'}
   ];
-  var SLOTS = [{key:'midi', label:'Midi'}, {key:'soir', label:'Soir'}];
+  var SLOTS = [{key:'midi', label:'Midi', icon:'☀️'}, {key:'soir', label:'Soir', icon:'🌙'}, {key:'dessert', label:'Dessert', icon:'🍰'}];
+  var FAMILY = [
+    {key:'selim', label:'Selim', color:'#2F6F6A', initial:'S'},
+    {key:'assia', label:'Assia', color:'#B04E68', initial:'A'},
+    {key:'lila', label:'Lila', color:'#D9992E', initial:'L'}
+  ];
   var UNITS = ['g','kg','ml','l','pièce','c. à s.','c. à c.','pincée','tranche'];
   var TAGS = [
-    {key:'rapide', label:'Rapide', color:'#C89B3C'},
-    {key:'vege', label:'Végé', color:'#7C9473'},
+    {key:'rapide', label:'Rapide', color:'#C9992E'},
+    {key:'vege', label:'Végé', color:'#6E9178'},
     {key:'confort', label:'Confort', color:'#A8432A'},
-    {key:'leger', label:'Léger', color:'#726F60'}
+    {key:'dessert', label:'Dessert', color:'#B04E68'},
+    {key:'leger', label:'Léger', color:'#7A6F63'}
   ];
   var STORAGE_KEY = 'menu-app-data';
 
@@ -373,12 +502,44 @@
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
   }
-  function tagInfo(key){ return TAGS.filter(function(t){return t.key===key;})[0] || TAGS[3]; }
+  function tagInfo(key){ return TAGS.filter(function(t){return t.key===key;})[0] || TAGS[4]; }
+  function familyInfo(key){ return FAMILY.filter(function(f){return f.key===key;})[0]; }
 
+  function emptySlot(){ return {selim:null, assia:null, lila:null}; }
   function emptyWeek(){
     var w = {};
-    DAYS.forEach(function(d){ w[d.key] = {midi:null, soir:null}; });
+    DAYS.forEach(function(d){ w[d.key] = {midi:emptySlot(), soir:emptySlot(), dessert:emptySlot(), cheat:false}; });
     return w;
+  }
+  // Migre un ancien format (une seule recette par créneau) vers le format par personne
+  function normalizeSlotValue(v){
+    if(v && typeof v === 'object') {
+      return {selim: v.selim||null, assia: v.assia||null, lila: v.lila||null};
+    }
+    if(typeof v === 'string'){
+      // ancien format : une recette unique -> on la met pour toute la famille
+      return {selim: v, assia: v, lila: v};
+    }
+    return emptySlot();
+  }
+  function normalizeWeek(w){
+    DAYS.forEach(function(d){
+      if(!w[d.key]) w[d.key] = {midi:emptySlot(), soir:emptySlot(), dessert:emptySlot(), cheat:false};
+      var day = w[d.key];
+      day.midi = normalizeSlotValue(day.midi);
+      day.soir = normalizeSlotValue(day.soir);
+      day.dessert = normalizeSlotValue(day.dessert);
+      if(day.cheat===undefined) day.cheat = false;
+    });
+    return w;
+  }
+  function assignPerson(day, slot, person, recipeId){
+    var s = state.week[day][slot];
+    if(person==='all'){
+      s.selim = recipeId; s.assia = recipeId; s.lila = recipeId;
+    } else {
+      s[person] = recipeId;
+    }
   }
 
   function seedRecipes(){
@@ -404,6 +565,17 @@
           {name:"Huile d'olive", qty:2, unit:'c. à s.'}
         ],
         instructions:"Préchauffer à 200°C. Disposer le poulet entouré des légumes coupés, huiler, saler, poivrer. Cuire 1h15 en arrosant régulièrement."
+      },
+      {
+        id: uid(), name:'Fondant au chocolat', tag:'dessert',
+        ingredients:[
+          {name:'Chocolat noir', qty:200, unit:'g'},
+          {name:'Beurre', qty:150, unit:'g'},
+          {name:'Œufs', qty:4, unit:'pièce'},
+          {name:'Sucre', qty:120, unit:'g'},
+          {name:'Farine', qty:50, unit:'g'}
+        ],
+        instructions:"Faire fondre le chocolat et le beurre. Ajouter le sucre puis les œufs un à un, enfin la farine. Cuire 10-12 min à 200°C : le centre doit rester coulant."
       }
     ];
   }
@@ -424,7 +596,7 @@
     }
     if(data){
       state.recipes = data.recipes || [];
-      state.week = data.week || emptyWeek();
+      state.week = normalizeWeek(data.week || emptyWeek());
       state.manualItems = data.manualItems || [];
       state.checked = data.checked || {};
     } else {
@@ -461,10 +633,11 @@
   function closeModal(){ state.modal = null; render(); }
 
   // ---------- HEADER ----------
-  function boardHeader(eyebrow, title, sub){
+  function boardHeader(eyebrow, title, sub, chipsHtml){
     return '<div class="board-header"><p class="board-eyebrow">'+esc(eyebrow)+'</p>' +
       '<h1 class="board-title display">'+esc(title)+'</h1>' +
-      (sub ? '<p class="board-sub">'+esc(sub)+'</p>' : '') + '</div>';
+      (sub ? '<p class="board-sub">'+esc(sub)+'</p>' : '') +
+      (chipsHtml || '') + '</div>';
   }
   function plainHeader(eyebrow, title, sub){
     return '<div class="plain-header"><p class="board-eyebrow">'+esc(eyebrow)+'</p>' +
@@ -473,28 +646,66 @@
   }
 
   // ---------- SEMAINE ----------
+  function slotFilledIds(slotVal){
+    // liste des recipeId assignés (un par personne présente), sans doublons
+    var ids = [];
+    FAMILY.forEach(function(f){
+      var rid = slotVal[f.key];
+      if(rid) ids.push(rid);
+    });
+    return ids;
+  }
   function renderSemaine(){
-    var filled = 0, total = DAYS.length*SLOTS.length;
-    DAYS.forEach(function(d){ SLOTS.forEach(function(s){ if(state.week[d.key] && state.week[d.key][s]) filled++; }); });
-    var html = boardHeader('Cette semaine', 'Menu de la semaine', filled+' repas planifiés sur '+total);
+    var filledSlots = 0, total = DAYS.length*SLOTS.length, cheatCount = 0, dessertSlots = 0;
     DAYS.forEach(function(d){
-      html += '<div class="day-card"><div class="day-name">'+esc(d.label)+'</div>';
+      var day = state.week[d.key];
+      if(!day) return;
+      SLOTS.forEach(function(s){ if(slotFilledIds(day[s.key]).length>0) filledSlots++; });
+      if(slotFilledIds(day.dessert).length>0) dessertSlots++;
+      if(day.cheat) cheatCount++;
+    });
+    var chips = '<div class="stat-chips">' +
+      '<span class="stat-chip">🍽 <b>'+filledSlots+'</b>/'+total+'</span>' +
+      '<span class="stat-chip">🍰 <b>'+dessertSlots+'</b> dessert'+(dessertSlots>1?'s':'')+'</span>' +
+      '<span class="stat-chip">🔥 <b>'+cheatCount+'</b> cheat day'+(cheatCount>1?'s':'')+'</span>' +
+      '</div>';
+    var html = boardHeader('Cette semaine', 'Menu de la semaine', 'Selim · Assia · Lila — à chacun son assiette.', chips);
+    html += '<div class="week-grid">';
+    DAYS.forEach(function(d, idx){
+      var isWeekend = idx===6; // dimanche seul sur la dernière ligne -> pleine largeur
+      var day = state.week[d.key] || {midi:emptySlot(), soir:emptySlot(), dessert:emptySlot(), cheat:false};
+      var isCheat = !!day.cheat;
+      html += '<div class="week-cell'+(isWeekend?' is-weekend':'')+(isCheat?' is-cheat':'')+'">';
+      html += '<div class="week-cell-top"><span class="week-cell-day">'+esc(d.label)+'</span>' +
+        '<button class="cheat-toggle" data-action="toggle-cheat" data-day="'+d.key+'" title="Cheat meal">'+(isCheat?'🔥':'🕯️')+'</button></div>';
+      if(isCheat) html += '<span class="cheat-label">Cheat day</span>';
+      html += '<div class="week-slots">';
       SLOTS.forEach(function(s){
-        var rid = state.week[d.key] ? state.week[d.key][s.key] : null;
-        var recipe = rid ? state.recipes.filter(function(r){return r.id===rid;})[0] : null;
-        html += '<div class="slot-row" data-day="'+d.key+'" data-slot="'+s.key+'" data-action="'+(recipe?'slot-options':'slot-pick')+'">';
-        html += '<span class="slot-tag">'+esc(s.label)+'</span>';
-        if(recipe){
-          var tg = tagInfo(recipe.tag);
-          html += '<div class="slot-filled"><span class="recipe-name"><span class="tag-dot" style="background:'+tg.color+'"></span>'+esc(recipe.name)+'</span>' +
-                  '<span class="remove-x" data-action="slot-remove" data-day="'+d.key+'" data-slot="'+s.key+'">×</span></div>';
+        var slotVal = day[s.key];
+        var ids = slotFilledIds(slotVal);
+        html += '<div class="week-slot-mini" data-day="'+d.key+'" data-slot="'+s.key+'" data-action="open-slot-people">';
+        html += '<span class="mini-tag">'+s.icon+' '+esc(s.label)+'</span>';
+        if(ids.length===0){
+          html += '<span class="mini-content is-empty">+ ajouter</span>';
         } else {
-          html += '<span class="slot-empty">+ choisir une recette</span>';
+          html += '<span class="people-dots">';
+          FAMILY.forEach(function(f){
+            var rid = slotVal[f.key];
+            var filled = !!rid;
+            html += '<span class="p-dot'+(filled?' filled':'')+'" style="'+(filled?('background:'+f.color+';border-color:'+f.color+';'):('border-color:'+(isCheat?'rgba(255,255,255,0.4)':'rgba(122,111,99,0.3)')+';'))+'">'+(filled?f.initial:'')+'</span>';
+          });
+          html += '</span>';
+          var allSame = ids.length===3 && slotVal.selim===slotVal.assia && slotVal.assia===slotVal.lila;
+          if(allSame){
+            var recipe = state.recipes.filter(function(r){return r.id===ids[0];})[0];
+            if(recipe) html += '<span class="mini-content" style="margin-top:2px;">'+esc(recipe.name)+'</span>';
+          }
         }
         html += '</div>';
       });
-      html += '</div>';
+      html += '</div></div>';
     });
+    html += '</div>';
     return html;
   }
 
@@ -506,12 +717,17 @@
       html += '<div class="empty-state"><div class="es-icon">📖</div><div class="es-title">Carnet vide</div>' +
         '<div class="es-sub">Ajoutez vos recettes favorites pour pouvoir<br>les glisser dans votre semaine.</div></div>';
     } else {
+      if(state.recipes.length>0){
+        html += '<p class="section-label" style="padding-top:0;">Glissez une recette vers la gauche pour la supprimer</p>';
+      }
       state.recipes.slice().sort(function(a,b){return a.name.localeCompare(b.name,'fr');}).forEach(function(r){
         var tg = tagInfo(r.tag);
-        html += '<div class="recipe-card" data-action="open-recipe" data-id="'+r.id+'">' +
+        html += '<div class="recipe-card-wrap">' +
+          '<div class="recipe-card-delete-bg" data-action="delete-recipe" data-id="'+r.id+'"><span>🗑 Supprimer</span></div>' +
+          '<div class="recipe-card" data-action="open-recipe" data-id="'+r.id+'">' +
           '<div class="rc-top"><span class="rc-name">'+esc(r.name)+'</span>' +
           '<span class="rc-tag" style="background:'+tg.color+'">'+esc(tg.label)+'</span></div>' +
-          '<div class="rc-count">'+r.ingredients.length+' ingrédient(s)</div></div>';
+          '<div class="rc-count">'+r.ingredients.length+' ingrédient(s)</div></div></div>';
       });
     }
     return html;
@@ -522,15 +738,23 @@
     var map = {};
     DAYS.forEach(function(d){
       SLOTS.forEach(function(s){
-        var rid = state.week[d.key] ? state.week[d.key][s.key] : null;
-        if(!rid) return;
-        var recipe = state.recipes.filter(function(r){return r.id===rid;})[0];
-        if(!recipe) return;
-        recipe.ingredients.forEach(function(ing){
-          if(!ing.name) return;
-          var key = ing.name.trim().toLowerCase()+'|'+(ing.unit||'');
-          if(!map[key]) map[key] = {key:key, name:ing.name.trim(), unit:ing.unit||'', qty:0};
-          map[key].qty += Number(ing.qty)||0;
+        var slotVal = state.week[d.key] ? state.week[d.key][s.key] : null;
+        if(!slotVal) return;
+        // recettes distinctes assignées sur ce créneau (un même plat n'est compté qu'une fois)
+        var distinctIds = [];
+        FAMILY.forEach(function(f){
+          var rid = slotVal[f.key];
+          if(rid && distinctIds.indexOf(rid)===-1) distinctIds.push(rid);
+        });
+        distinctIds.forEach(function(rid){
+          var recipe = state.recipes.filter(function(r){return r.id===rid;})[0];
+          if(!recipe) return;
+          recipe.ingredients.forEach(function(ing){
+            if(!ing.name) return;
+            var key = ing.name.trim().toLowerCase()+'|'+(ing.unit||'');
+            if(!map[key]) map[key] = {key:key, name:ing.name.trim(), unit:ing.unit||'', qty:0};
+            map[key].qty += Number(ing.qty)||0;
+          });
         });
       });
     });
@@ -575,7 +799,7 @@
     var html = '<div class="bottom-nav">';
     tabs.forEach(function(t){
       html += '<button class="nav-btn'+(state.tab===t.key?' active':'')+'" data-action="set-tab" data-tab="'+t.key+'">' +
-        '<span class="nav-icon">'+t.icon+'</span>'+t.label+'</button>';
+        '<span class="nav-icon">'+t.icon+'</span>'+t.label+'<span class="nav-dot"></span></button>';
     });
     html += '</div>';
     return html;
@@ -616,17 +840,64 @@
           '</div>' +
           '<div class="modal-actions" style="padding-top:0;"><button class="btn btn-rust btn-block" data-action="delete-recipe" data-id="'+r.id+'">Supprimer la recette</button></div>';
       }
+    } else if(m.type==='slot-people'){
+      var dayLabel = DAYS.filter(function(d){return d.key===m.day;})[0].label;
+      var slotObj = SLOTS.filter(function(s){return s.key===m.slot;})[0];
+      var slotVal = state.week[m.day][m.slot];
+      inner = '<p class="board-eyebrow" style="padding:10px 20px 0; color:var(--gold-2);">'+esc(dayLabel)+'</p>';
+      inner += '<p class="sheet-title display">'+slotObj.icon+' '+esc(slotObj.label)+'</p><button class="sheet-close" data-action="close-modal">✕</button>';
+      inner += '<button class="all-family-btn" data-action="pick-person" data-day="'+m.day+'" data-slot="'+m.slot+'" data-person="all">🍽 Même repas pour tous</button>';
+      FAMILY.forEach(function(f){
+        var rid = slotVal[f.key];
+        var recipe = rid ? state.recipes.filter(function(r){return r.id===rid;})[0] : null;
+        inner += '<div class="person-row" data-action="pick-person" data-day="'+m.day+'" data-slot="'+m.slot+'" data-person="'+f.key+'">' +
+          '<span class="person-avatar" style="background:'+f.color+'">'+f.initial+'</span>' +
+          '<span class="person-info"><span class="person-name">'+esc(f.label)+'</span><br>' +
+          '<span class="person-recipe'+(recipe?' filled':'')+'">'+(recipe?esc(recipe.name):'+ choisir une recette')+'</span></span>';
+        inner += '<span class="person-actions">';
+        if(recipe){
+          inner += '<span class="person-view" data-action="view-person-recipe" data-id="'+recipe.id+'">👁</span>' +
+            '<span class="person-clear" data-action="clear-person" data-day="'+m.day+'" data-slot="'+m.slot+'" data-person="'+f.key+'">✕</span>';
+        } else {
+          inner += '<span style="color:var(--ink-soft);font-size:16px;">›</span>';
+        }
+        inner += '</span></div>';
+      });
+      inner += '<div style="height:8px;"></div>';
     } else if(m.type==='plan-recipe'){
       inner = '<p class="sheet-title display">Ajouter à quel repas ?</p><button class="sheet-close" data-action="close-modal">✕</button>';
       inner += '<div class="pick-grid">';
       DAYS.forEach(function(d){
         SLOTS.forEach(function(s){
-          var filled = state.week[d.key] && state.week[d.key][s.key];
-          inner += '<div class="pick-cell'+(filled?' filled':'')+'" data-action="assign-from-recipe" data-day="'+d.key+'" data-slot="'+s.key+'">' +
+          var filled = state.week[d.key] && slotFilledIds(state.week[d.key][s.key]).length>0;
+          inner += '<div class="pick-cell'+(filled?' filled':'')+'" data-action="pick-plan-slot" data-day="'+d.key+'" data-slot="'+s.key+'">' +
             esc(d.label)+' · '+esc(s.label)+'</div>';
         });
       });
       inner += '</div><div style="height:8px;"></div>';
+    } else if(m.type==='plan-recipe-person'){
+      var dayLabel2 = DAYS.filter(function(d){return d.key===m.day;})[0].label;
+      var slotObj2 = SLOTS.filter(function(s){return s.key===m.slot;})[0];
+      inner = '<p class="board-eyebrow" style="padding:10px 20px 0; color:var(--gold-2);">'+esc(dayLabel2)+' · '+esc(slotObj2.label)+'</p>';
+      inner += '<p class="sheet-title display">Pour qui ?</p><button class="sheet-close" data-action="close-modal">✕</button>';
+      inner += '<div class="who-choice-row" data-action="assign-person-final" data-person="all">' +
+        '<span class="person-avatar" style="background:linear-gradient(135deg, var(--gold-1), var(--gold-2)); color:#2A2119;">🍽</span>' +
+        '<span class="person-name">Toute la famille</span></div>';
+      FAMILY.forEach(function(f){
+        inner += '<div class="who-choice-row" data-action="assign-person-final" data-person="'+f.key+'">' +
+          '<span class="person-avatar" style="background:'+f.color+'">'+f.initial+'</span>' +
+          '<span class="person-name">'+esc(f.label)+'</span></div>';
+      });
+      inner += '<div style="height:8px;"></div>';
+    } else if(m.type==='confirm-delete'){
+      var r = state.recipes.filter(function(x){return x.id===m.id;})[0];
+      inner = '<div style="padding:22px 20px 4px; text-align:center;">' +
+        '<div style="font-size:34px; margin-bottom:8px;">🗑</div>' +
+        '<p class="sheet-title display" style="text-align:center; padding:0;">Supprimer cette recette ?</p>' +
+        '<p style="font-size:13.5px; color:var(--ink-soft); margin-top:6px;">'+(r?esc(r.name):'')+' sera retirée de votre carnet et de votre semaine. Cette action est définitive.</p>' +
+        '</div>';
+      inner += '<div class="modal-actions"><button class="btn btn-ghost" style="flex:1;" data-action="close-modal">Annuler</button>' +
+        '<button class="btn btn-rust" style="flex:1; border-color:var(--rust); background:rgba(168,67,42,0.08);" data-action="confirm-delete-yes">Supprimer</button></div>';
     } else if(m.type==='recipe-form'){
       inner = renderRecipeForm();
     }
@@ -707,6 +978,50 @@
         if(e.key==='Enter'){ addManualItem(); }
       });
     }
+    attachSwipeHandlers();
+  }
+
+  var SWIPE_OPEN_X = -84;
+  function closeAllSwipedCards(except){
+    document.querySelectorAll('.recipe-card[data-swipe-open="1"]').forEach(function(c){
+      if(c===except) return;
+      c.style.transform = 'translateX(0px)';
+      c.dataset.swipeOpen = '0';
+    });
+  }
+  function attachSwipeHandlers(){
+    document.querySelectorAll('.recipe-card').forEach(function(card){
+      var startX = 0, baseX = 0, curX = 0, dragging = false, moved = false;
+      card.addEventListener('touchstart', function(ev){
+        closeAllSwipedCards(card);
+        startX = ev.touches[0].clientX;
+        baseX = card.dataset.swipeOpen==='1' ? SWIPE_OPEN_X : 0;
+        dragging = true; moved = false;
+        card.style.transition = 'none';
+      }, {passive:true});
+      card.addEventListener('touchmove', function(ev){
+        if(!dragging) return;
+        var delta = ev.touches[0].clientX - startX;
+        if(Math.abs(delta) > 8) moved = true;
+        curX = baseX + delta;
+        if(curX > 0) curX = 0;
+        if(curX < SWIPE_OPEN_X - 20) curX = SWIPE_OPEN_X - 20;
+        card.style.transform = 'translateX('+curX+'px)';
+      }, {passive:true});
+      card.addEventListener('touchend', function(){
+        dragging = false;
+        card.style.transition = 'transform 0.22s ease';
+        if(curX < SWIPE_OPEN_X/2){
+          card.style.transform = 'translateX('+SWIPE_OPEN_X+'px)';
+          card.dataset.swipeOpen = '1';
+        } else {
+          card.style.transform = 'translateX(0px)';
+          card.dataset.swipeOpen = '0';
+        }
+        if(moved) card.dataset.justDragged = '1';
+        curX = 0;
+      });
+    });
   }
 
   function addManualItem(){
@@ -723,31 +1038,55 @@
     var el = e.currentTarget;
     var action = el.getAttribute('data-action');
 
+    if(el.dataset && el.dataset.justDragged==='1'){
+      el.dataset.justDragged = '0';
+      return;
+    }
+    if(action==='open-recipe' && el.dataset && el.dataset.swipeOpen==='1'){
+      el.style.transform = 'translateX(0px)';
+      el.dataset.swipeOpen = '0';
+      return;
+    }
+
     if(action==='set-tab'){ setTab(el.getAttribute('data-tab')); return; }
     if(action==='overlay-close'){ closeModal(); return; }
     if(action==='close-modal'){ closeModal(); return; }
 
-    if(action==='slot-pick' || action==='slot-options'){
+    if(action==='open-slot-people'){
       var day = el.getAttribute('data-day'), slot = el.getAttribute('data-slot');
-      if(action==='slot-options'){
-        openModal({type:'pick-recipe', day:day, slot:slot});
-      } else {
-        openModal({type:'pick-recipe', day:day, slot:slot});
-      }
+      openModal({type:'slot-people', day:day, slot:slot});
       return;
     }
-    if(action==='slot-remove'){
+    if(action==='pick-person'){
+      var day = el.getAttribute('data-day'), slot = el.getAttribute('data-slot'), person = el.getAttribute('data-person');
+      openModal({type:'pick-recipe', day:day, slot:slot, person:person});
+      return;
+    }
+    if(action==='clear-person'){
       e.stopPropagation();
-      var day = el.getAttribute('data-day'), slot = el.getAttribute('data-slot');
-      state.week[day][slot] = null;
+      var day = el.getAttribute('data-day'), slot = el.getAttribute('data-slot'), person = el.getAttribute('data-person');
+      state.week[day][slot][person] = null;
+      persist();
+      openModal({type:'slot-people', day:day, slot:slot});
+      return;
+    }
+    if(action==='view-person-recipe'){
+      e.stopPropagation();
+      openModal({type:'recipe-detail', id:el.getAttribute('data-id')});
+      return;
+    }
+    if(action==='toggle-cheat'){
+      e.stopPropagation();
+      var day = el.getAttribute('data-day');
+      state.week[day].cheat = !state.week[day].cheat;
       persist(); render();
       return;
     }
     if(action==='assign-slot'){
       var m = state.modal;
-      state.week[m.day][m.slot] = el.getAttribute('data-id');
+      assignPerson(m.day, m.slot, m.person, el.getAttribute('data-id'));
       persist();
-      closeModal();
+      openModal({type:'slot-people', day:m.day, slot:m.slot});
       return;
     }
 
@@ -768,22 +1107,36 @@
     }
     if(action==='delete-recipe'){
       var id = el.getAttribute('data-id');
-      if(confirm('Supprimer cette recette ? Elle sera retirée de votre semaine.')){
-        state.recipes = state.recipes.filter(function(r){return r.id!==id;});
-        DAYS.forEach(function(d){ SLOTS.forEach(function(s){ if(state.week[d.key][s.key]===id) state.week[d.key][s.key]=null; }); });
-        persist();
-        closeModal();
-      }
+      openModal({type:'confirm-delete', id:id});
+      return;
+    }
+    if(action==='confirm-delete-yes'){
+      var id = state.modal.id;
+      state.recipes = state.recipes.filter(function(r){return r.id!==id;});
+      DAYS.forEach(function(d){
+        SLOTS.forEach(function(s){
+          var slotVal = state.week[d.key][s.key];
+          FAMILY.forEach(function(f){ if(slotVal[f.key]===id) slotVal[f.key]=null; });
+        });
+      });
+      persist();
+      closeModal();
       return;
     }
     if(action==='plan-recipe'){
       openModal({type:'plan-recipe', recipeId:el.getAttribute('data-id')});
       return;
     }
-    if(action==='assign-from-recipe'){
+    if(action==='pick-plan-slot'){
       var day = el.getAttribute('data-day'), slot = el.getAttribute('data-slot');
       var priorModal = state.modal;
-      state.week[day][slot] = priorModal.recipeId;
+      openModal({type:'plan-recipe-person', day:day, slot:slot, recipeId:priorModal.recipeId});
+      return;
+    }
+    if(action==='assign-person-final'){
+      var m = state.modal;
+      var person = el.getAttribute('data-person');
+      assignPerson(m.day, m.slot, person, m.recipeId);
       persist();
       closeModal();
       return;
